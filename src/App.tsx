@@ -1,117 +1,22 @@
 import { useCallback, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
+import Icon from "./Icon";
+import brandIcon from "../icon.jpg";
 import StepModel from "./StepModel";
 import "./App.css";
 
-function Icon({ name, size = 20 }: { name: string; size?: number }) {
-  const paths: Record<string, ReactNode> = {
-    spark: (
-      <>
-        <path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6Z" />
-        <path d="m20 2 .7 1.3L22 4l-1.3.7L20 6l-.7-1.3L18 4l1.3-.7Z" />
-      </>
-    ),
-    database: (
-      <>
-        <ellipse cx="12" cy="5" rx="8" ry="3" />
-        <path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0" />
-      </>
-    ),
-    cube: (
-      <>
-        <path d="m12 2 9 5v10l-9 5-9-5V7Zm0 10v10M3 7l9 5 9-5M7.5 4.5l9 5v5" />
-      </>
-    ),
-    search: (
-      <>
-        <circle cx="10.5" cy="10.5" r="6.5" />
-        <path d="m16 16 5 5" />
-      </>
-    ),
-    upload: (
-      <>
-        <path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5" />
-      </>
-    ),
-    chevron: <path d="m9 5 7 7-7 7" />,
-    down: <path d="m6 9 6 6 6-6" />,
-    plus: <path d="M12 5v14M5 12h14" />,
-    minus: <path d="M5 12h14" />,
-    reset: (
-      <>
-        <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" />
-      </>
-    ),
-    expand: <path d="M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6" />,
-    settings: (
-      <>
-        <path d="M4 7h16M4 17h16" />
-        <circle cx="9" cy="7" r="3" fill="currentColor" />
-        <circle cx="16" cy="17" r="3" fill="currentColor" />
-      </>
-    ),
-    help: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M9 9a3 3 0 1 1 4 3v2m-1 3h.01" />
-      </>
-    ),
-    check: <path d="m5 12 4 4L19 6" />,
-    file: (
-      <>
-        <path d="M14 2H5v20h14V7Zm0 0v6h5M8 13h8M8 17h6" />
-      </>
-    ),
-    arrow: <path d="M4 12h16m-6-6 6 6-6 6" />,
-    sort: (
-      <>
-        <path d="M8 4v16m-4-4 4 4 4-4M16 20V4m-4 4 4-4 4 4" />
-      </>
-    ),
-  };
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.65"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {paths[name] || paths.cube}
-    </svg>
-  );
-}
 function Panda() {
-  return (
-    <svg viewBox="0 0 48 48" width="39" height="39" aria-label="Panda logo">
-      <circle cx="12" cy="12" r="8" fill="white" />
-      <circle cx="36" cy="12" r="8" fill="white" />
-      <ellipse cx="24" cy="26" rx="20" ry="18" fill="white" />
-      <ellipse
-        cx="16"
-        cy="25"
-        rx="6"
-        ry="7"
-        transform="rotate(25 16 25)"
-        fill="#171719"
-      />
-      <ellipse
-        cx="32"
-        cy="25"
-        rx="6"
-        ry="7"
-        transform="rotate(-25 32 25)"
-        fill="#171719"
-      />
-      <circle cx="17" cy="24" r="2" fill="white" />
-      <circle cx="31" cy="24" r="2" fill="white" />
-      <path d="M20 34q4-5 8 0l-4 3Z" fill="#171719" />
-    </svg>
-  );
+  return <img className="brand-icon" src={brandIcon} width="39" height="39" alt="Panda logo" />;
+}
+function materialFamily(material: string) {
+  const name = material.toLowerCase();
+  if (/alumin|alumn/.test(name)) return "aluminum";
+  if (name.includes("stainless")) return "stainless";
+  if (name.includes("steel")) return "steel";
+  if (name.includes("brass")) return "brass";
+  if (name.includes("copper")) return "copper";
+  if (name.includes("titanium")) return "titanium";
+  return "other";
 }
 const parts = [
   {
@@ -183,6 +88,7 @@ function App() {
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(""),
     [expanded, setExpanded] = useState(false),
+    [configurationOpen, setConfigurationOpen] = useState(true),
     [features, setFeatures] = useState(true),
     [threshold, setThreshold] = useState(80),
     [searchMaterial, setSearchMaterial] = useState("All materials");
@@ -295,20 +201,6 @@ function App() {
         </div>
       </aside>
       <div className="main-shell">
-        <header className="topbar">
-          <div className="breadcrumbs">
-            Workspace
-            <Icon name="chevron" size={13} />
-            <span>
-              {tab === "similarity" ? "AI similarity check" : "Database viewer"}
-            </span>
-          </div>
-          <div className="topbar-right">
-            <span className="demo-tag">DEMO WORKSPACE</span>
-            <span className="header-divider" />
-            <span className="small-avatar">JD</span>
-          </div>
-        </header>
         <main>
           <div className="page-heading">
             <div>
@@ -485,13 +377,23 @@ function App() {
                       </button>
                       </div>
                     </div>
-                  </section>
-                  <section className="panel settings-panel">
-                    <div className="panel-heading">
-                      <h2>
+                  <section className={`settings-drawer ${configurationOpen ? "open" : ""}`}>
+                    <div className="drawer-header">
+                      <button
+                        className="drawer-toggle"
+                        aria-expanded={configurationOpen}
+                        aria-controls="search-configuration"
+                        aria-label={configurationOpen ? "Hide search configuration" : "Show search configuration"}
+                        onClick={() => setConfigurationOpen((open) => !open)}
+                      >
+                        <span className="drawer-handle" />
                         <Icon name="settings" size={18} />
-                        Search configuration
-                      </h2>
+                        <span>Search configuration</span>
+                        <span className="drawer-action">{configurationOpen ? "Hide" : "Show"}</span>
+                        <span className={`drawer-chevron ${configurationOpen ? "" : "closed"}`}>
+                          <Icon name="down" size={16} />
+                        </span>
+                      </button>
                       <button
                         className="text-button"
                         onClick={() => {
@@ -503,7 +405,7 @@ function App() {
                         Reset
                       </button>
                     </div>
-                    <div className="settings-body">
+                    <div className="settings-body" id="search-configuration" hidden={!configurationOpen}>
                       <div className="setting-label">
                         <label htmlFor="tolerance">
                           Minimum similarity{" "}
@@ -594,6 +496,7 @@ function App() {
                       </div>
                     </div>
                   </section>
+                  </section>
                 </div>
                 <section className="panel database-panel">
                   <div className="panel-heading">
@@ -651,9 +554,22 @@ function App() {
                   <div className="parts-list">
                     {visible.map((part, index) => (
                       <article
-                        className={`part-card ${selected === part.id ? "selected" : ""}`}
+                        className={`part-card ${comparison && selected === part.id ? "selected" : ""}`}
                         key={part.id}
                       >
+                        <button
+                          type="button"
+                          className="part-card-hitarea"
+                          aria-label={`Load model: ${part.name}`}
+                          aria-pressed={comparison && selected === part.id}
+                          onClick={() => {
+                            setSelected(part.id);
+                            setComparison(true);
+                          }}
+                        />
+                        {index === 0 && searched && sort && (
+                          <div className="best-match">BEST MATCH</div>
+                        )}
                         <div className="part-thumbnail">
                           <Icon name="cube" size={27} />
                           <span>CAD</span>
@@ -671,45 +587,33 @@ function App() {
                           </div>
                           <h3>{part.name}</h3>
                           <div className="part-tags">
-                            <span>{part.material}</span>
+                            <span className={`material-tag material-${materialFamily(part.material)}`}>
+                              <i className="material-dot" />
+                              {part.material}
+                            </span>
                             <span>{part.category}</span>
                           </div>
                           <div className="part-card-footer">
-                            <span>
-                              Last quote{" "}
+                            <div className="last-quote">
+                              <span>Last quote</span>
                               <strong>
                                 ${part.price.toFixed(2)}
                                 <small> / unit</small>
                               </strong>
-                            </span>
+                            </div>
                             <button
-                              className={
-                                comparison && selected === part.id
-                                  ? "loaded-button"
-                                  : "load-button"
-                              }
-                              onClick={() => {
-                                setSelected(part.id);
-                                setComparison(true);
-                              }}
+                              type="button"
+                              className="quotation-button"
+                              aria-label={`Quotation PDF for ${part.name}`}
+                              aria-disabled="true"
+                              title="No quotation PDF attached yet"
+                              onClick={(event) => event.stopPropagation()}
                             >
-                              <Icon
-                                name={
-                                  comparison && selected === part.id
-                                    ? "check"
-                                    : "cube"
-                                }
-                                size={14}
-                              />
-                              {comparison && selected === part.id
-                                ? "Loaded"
-                                : "Load model"}
+                              <Icon name="file" size={14} />
+                              Quote PDF
                             </button>
                           </div>
                         </div>
-                        {index === 0 && searched && sort && (
-                          <div className="best-match">BEST MATCH</div>
-                        )}
                       </article>
                     ))}
                     {visible.length === 0 && (
@@ -733,14 +637,6 @@ function App() {
                     </span>
                   </div>
                 </section>
-              </div>
-              <div className="bottom-tip">
-                <span>
-                  <Icon name="spark" size={17} />
-                  <strong>A familiar part. A faster quote.</strong> Use past
-                  work as your starting point for your next project.
-                </span>
-                <span>Made for the shop floor.</span>
               </div>
             </>
           )}
